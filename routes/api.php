@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\Api\ExampleController;
+use App\Http\Controllers\Api\AuthController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -14,18 +14,19 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-// Example: GET /api/health
 Route::get('/health', function () {
     return response()->json([
-        'status' => 'healthy',
+        'status' => 'ok',
         'timestamp' => now()->toIso8601String(),
     ]);
 });
 
-// Example API Resource - demonstrates RESTful endpoints
-// This creates routes: GET /api/examples, POST /api/examples, GET /api/examples/{id}, etc.
-Route::apiResource('examples', ExampleController::class);
+// Authentication routes
+Route::post('/register', [AuthController::class, 'register']);
+Route::post('/login', [AuthController::class, 'login']);
 
-// Your API routes go here
-// Example:
-// Route::apiResource('users', UserController::class);
+// Protected routes
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/user', [AuthController::class, 'user']);
+    Route::post('/logout', [AuthController::class, 'logout']);
+});
